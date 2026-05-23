@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detektif Bahasa: Petualangan Kelas 5</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka & Quicksand (Sangat cocok untuk anak-anak) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #f0fdf4; /* Light mint green */
+        }
+        h1, h2, h3, .font-kids {
+            font-family: 'Fredoka', sans-serif;
+        }
+        /* Custom Keyframe Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .float-animation {
+            animation: float 4s ease-in-out infinite;
+        }
+        .pulse-animation {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+        .custom-shadow {
+            box-shadow: 0 8px 0px 0px #e2e8f0;
+        }
+        .btn-shadow-blue {
+            box-shadow: 0 6px 0px 0px #1d4ed8;
+        }
+        .btn-shadow-green {
+            box-shadow: 0 6px 0px 0px #047857;
+        }
+        .btn-shadow-purple {
+            box-shadow: 0 6px 0px 0px #6d28d9;
+        }
+        .btn-shadow-yellow {
+            box-shadow: 0 6px 0px 0px #b45309;
+        }
+        .card-shadow-pink {
+            box-shadow: 0 10px 0px 0px #db2777;
+        }
+        .card-shadow-indigo {
+            box-shadow: 0 10px 0px 0px #4f46e5;
+        }
+        .card-shadow-teal {
+            box-shadow: 0 10px 0px 0px #0d9488;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col overflow-x-hidden select-none">
+
+    <!-- Efek Suara Web Audio API -->
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playTone(freq, type, duration) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                console.log("Audio context blocked or unsupported");
+            }
+        }
+
+        function playCorrectSound() {
+            playTone(523.25, 'sine', 0.1); // C5
+            setTimeout(() => playTone(659.25, 'sine', 0.15), 100); // E5
+            setTimeout(() => playTone(783.99, 'sine', 0.3), 200); // G5
+        }
+
+        function playWrongSound() {
+            playTone(220, 'triangle', 0.2); // A3
+            setTimeout(() => playTone(147, 'triangle', 0.4), 150); // D3
+        }
+
+        function playClickSound() {
+            playTone(400, 'sine', 0.05);
+        }
+
+        function playVictorySound() {
+            const notes = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50];
+            notes.forEach((note, index) => {
+                setTimeout(() => playTone(note, 'sine', 0.2), index * 100);
+            });
+        }
+    </script>
+
+    <!-- Header & Navigation -->
+    <header class="bg-amber-100 border-b-4 border-amber-400 p-4 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
+                <div class="bg-amber-400 p-2.5 rounded-full border-2 border-amber-600 float-animation shadow-inner">
+                    <!-- Magnifying Glass Icon inside Book (SVG) -->
+                    <svg class="w-8 h-8 text-amber-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253M9 10h1m-1 2h1m11-4V4H4v4M17 14l3 3m-1-5a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-amber-950 tracking-wide">DETEKTIF BAHASA</h1>
+                    <p class="text-xs md:text-sm font-semibold text-amber-800">Petualangan Literasi Kelas 5 SD ✨</p>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <nav class="flex flex-wrap gap-2 justify-center">
+                <button onclick="switchTab('materi')" id="btn-materi" class="nav-btn px-4 py-2 rounded-2xl bg-pink-400 hover:bg-pink-500 text-white font-bold border-b-4 border-pink-600 transition-all transform hover:-translate-y-0.5 active:translate-y-1">
+                    📚 Ruang Belajar
+                </button>
+                <button onclick="switchTab('langkah')" id="btn-langkah" class="nav-btn px-4 py-2 rounded-2xl bg-indigo-400 hover:bg-indigo-500 text-white font-bold border-b-4 border-indigo-600 transition-all transform hover:-translate-y-0.5 active:translate-y-1">
+                    ⚙️ Mesin Langkah
+                </button>
+                <button onclick="switchTab('game')" id="btn-game" class="nav-btn px-4 py-2 rounded-2xl bg-emerald-400 hover:bg-emerald-500 text-white font-bold border-b-4 border-emerald-600 transition-all transform hover:-translate-y-0.5 active:translate-y-1">
+                    🎮 Kuis Detektif (20 Soal)
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+
+        <!-- TAB 1: HOME/WELCOME -->
+        <section id="tab-home" class="tab-content block space-y-8 animate-fade-in">
+            <div class="bg-gradient-to-r from-sky-400 to-indigo-500 rounded-3xl p-6 md:p-12 text-white relative overflow-hidden shadow-2xl border-4 border-indigo-600">
+                <!-- Background decorative bubbles -->
+                <div class="absolute -top-10 -left-10 w-40 h-40 bg-white opacity-10 rounded-full"></div>
+                <div class="absolute -bottom-10 -right-10 w-60 h-60 bg-white opacity-10 rounded-full"></div>
+                
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div class="space-y-4 max-w-xl text-center md:text-left">
+                        <span class="bg-yellow-400 text-amber-950 font-extrabold px-4 py-1.5 rounded-full text-xs md:text-sm uppercase tracking-wider pulse-animation inline-block">Misi Detektif Bahasa Indonesia</span>
+                        <h2 class="text-4xl md:text-5xl font-black leading-tight drop-shadow-md">Ayo Jadi Detektif Membaca dan Menyimak! 🔍🕵️‍♂️</h2>
+                        <p class="text-base md:text-lg font-medium text-sky-100">
+                            Halo sahabat hebat kelas 5! Mari kita asah kekuatan berpikir kita untuk menganalisis informasi penting, memisahkan ide pokok dan pendukung, serta merangkum kisah seru dengan asyik dan ceria!
+                        </p>
+                        <div class="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
+                            <button onclick="switchTab('materi')" class="px-6 py-3 bg-yellow-400 hover:bg-yellow-300 text-amber-950 font-black text-lg rounded-2xl border-b-4 border-yellow-600 transition-all transform hover:-translate-y-1 active:translate-y-0 active:border-b-0">
+                                Mulai Belajar! 🚀
+                            </button>
+                            <button onclick="switchTab('game')" class="px-6 py-3 bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-black text-lg rounded-2xl border-b-4 border-emerald-600 transition-all transform hover:-translate-y-1 active:translate-y-0 active:border-b-0">
+                                Main Kuis! 🎮
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Cute SVG Detective Character Mascot -->
+                    <div class="w-48 h-48 md:w-72 md:h-72 flex justify-center items-center relative float-animation">
+                        <svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- Background glow -->
+                            <circle cx="100" cy="100" r="80" fill="#fef08a" opacity="0.8" />
+                            <!-- Face -->
+                            <circle cx="100" cy="110" r="50" fill="#fed7aa" stroke="#7c2d12" stroke-width="4" />
+                            <!-- Hair & Detective Hat -->
+                            <path d="M 50 110 Q 50 70 100 70 Q 150 70 150 110" fill="#7c2d12" />
+                            <ellipse cx="100" cy="70" rx="65" ry="12" fill="#78350f" stroke="#451a03" stroke-width="4" />
+                            <path d="M 60 70 Q 100 25 140 70 Z" fill="#78350f" stroke="#451a03" stroke-width="4" />
+                            <rect x="75" y="58" width="50" height="12" fill="#ef4444" />
+                            <!-- Eyes -->
+                            <circle cx="80" cy="105" r="7" fill="#1e293b" />
+                            <circle cx="80" cy="103" r="2.5" fill="#ffffff" />
+                            <circle cx="120" cy="105" r="7" fill="#1e293b" />
+                            <circle cx="120" cy="103" r="2.5" fill="#ffffff" />
+                            <!-- Magnifying Glass held up -->
+                            <g transform="translate(110, 110) rotate(-15)">
+                                <rect x="15" y="10" width="8" height="35" rx="4" fill="#d97706" stroke="#451a03" stroke-width="3" />
+                                <circle cx="20" cy="5" r="20" fill="#93c5fd" stroke="#475569" stroke-width="4" opacity="0.8" />
+                                <circle cx="20" cy="5" r="14" fill="#e0f2fe" opacity="0.5" />
+                            </g>
+                            <!-- Smile -->
+                            <path d="M 90 125 Q 100 135 110 125" fill="none" stroke="#7c2d12" stroke-width="4" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3 Pokok Pembahasan (Grid Cards) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-pink-100 border-4 border-pink-500 rounded-2xl p-6 transition-all transform hover:-translate-y-2 card-shadow-pink">
+                    <div class="bg-pink-400 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl mb-4 font-bold border-2 border-pink-600">1</div>
+                    <h3 class="text-xl font-extrabold text-pink-950 mb-2">Menganalisis Informasi</h3>
+                    <p class="text-pink-850 font-semibold text-sm leading-relaxed">
+                        Menggali info penting di dalam bacaan menggunakan jurus ampuh kata tanya <strong>ADIKSIMBA</strong> (Apa, Di mana, Kapan, Siapa, Mengapa, Bagaimana).
+                    </p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-indigo-100 border-4 border-indigo-500 rounded-2xl p-6 transition-all transform hover:-translate-y-2 card-shadow-indigo">
+                    <div class="bg-indigo-400 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl mb-4 font-bold border-2 border-indigo-600">2</div>
+                    <h3 class="text-xl font-extrabold text-indigo-950 mb-2">Ide Pokok & Pendukung</h3>
+                    <p class="text-indigo-850 font-semibold text-sm leading-relaxed">
+                        Menemukan inti masalah di batang utama paragraf (Ide Pokok) serta daun-daun rimbun yang menghiasinya (Ide Pendukung).
+                    </p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-teal-100 border-4 border-teal-500 rounded-2xl p-6 transition-all transform hover:-translate-y-2 card-shadow-teal">
+                    <div class="bg-teal-400 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl mb-4 font-bold border-2 border-teal-600">3</div>
+                    <h3 class="text-xl font-extrabold text-teal-950 mb-2">Menyusun Ringkasan</h3>
+                    <p class="text-teal-850 font-semibold text-sm leading-relaxed">
+                        Menyaring cerita panjang atau penjelasan lisan yang kita dengarkan menjadi catatan singkat, padat, dan jelas tanpa mengubah maknanya.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- TAB 2: MATERI INTERAKTIF (RUANG BELAJAR) -->
+        <section id="tab-materi" class="tab-content hidden space-y-8 animate-fade-in">
+            <div class="text-center space-y-2">
+                <h2 class="text-3xl md:text-4xl font-black text-amber-950">📚 Ruang Belajar Detektif Cilik</h2>
+                <p class="text-amber-800 font-bold max-w-xl mx-auto">Klik tombol pada peta konsep di bawah untuk mempelajari jurus-jurus rahasia literasi bahasa Indonesia!</p>
+            </div>
+
+            <!-- Interaktif Menu Peta Konsep -->
+            <div class="bg-white p-4 md:p-6 rounded-3xl border-4 border-amber-300 shadow-xl">
+                <!-- Button Selector inside Tab -->
+                <div class="flex flex-wrap justify-center gap-3 mb-8">
+                    <button onclick="showMateriDetail('materi-1')" id="btn-m1" class="materi-tab-btn px-5 py-3 rounded-2xl bg-pink-500 text-white font-extrabold border-b-4 border-pink-700 transition-all">
+                        📋 1. Menganalisis Informasi (ADIKSIMBA)
+                    </button>
+                    <button onclick="showMateriDetail('materi-2')" id="btn-m2" class="materi-tab-btn px-5 py-3 rounded-2xl bg-gray-200 text-gray-700 font-extrabold border-b-4 border-gray-400 transition-all">
+                        🌳 2. Ide Pokok vs Pendukung
+                    </button>
+                    <button onclick="showMateriDetail('materi-3')" id="btn-m3" class="materi-tab-btn px-5 py-3 rounded-2xl bg-gray-200 text-gray-700 font-extrabold border-b-4 border-gray-400 transition-all">
+                        🔊 3. Menyusun Ringkasan Simakan
+                    </button>
+                </div>
+
+                <!-- Detail Materi 1: Menganalisis Informasi (ADIKSIMBA) -->
+                <div id="materi-1" class="materi-panel space-y-6">
+                    <div class="bg-pink-50 rounded-2xl p-6 border-2 border-pink-300">
+                        <h3 class="text-2xl font-black text-pink-950 flex items-center gap-2 mb-4">
+                            🚂 Kereta Penyelidik ADIKSIMBA!
+                        </h3>
+                        <p class="text-pink-900 font-semibold mb-6">
+                            Ketika membaca teks, gunakan 6 gerbong pertanyaan ajaib ini untuk membedah seluruh isinya secara terperinci. Yuk lihat fungsi masing-masing gerbong!
+                        </p>
+
+                        <!-- Kereta Visual Grid -->
+                        <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
+                            <div class="bg-red-400 text-white p-4 rounded-xl text-center shadow-lg border-2 border-red-600 transition-all transform hover:scale-105 cursor-pointer" onclick="revealInfo('info-apa')">
+                                <span class="text-2xl">🔴</span>
+                                <h4 class="font-extrabold text-lg mt-1">Apa</h4>
+                                <p class="text-xs text-red-100">Menanyakan kejadian/benda</p>
+                            </div>
+                            <div class="bg-orange-400 text-white p-4 rounded-xl text-center shadow-lg border-2 border-orange-600 transition-all transform hover:scale-105 cursor-pointer" onclick="revealInfo('info-dimana')">
+                                <span class="text-2xl">🟠</span>
+                                <h4 class="font-extrabold text-lg mt-1">Di mana</h4>
+                                <p class="text-xs text-orange-100">Menanyakan lokasi/tempat</p>
+                            </div>
+                            <div class="bg-yellow-400 text-amber-950 p-4 rounded-xl text-center shadow-lg border-2 border-yellow-600 transition-all transform hover:scale-105 cursor-pointer" onclick="revealInfo('info-kapan')">
+                                <span class="text-2xl">🟡</span>
+                                <h4 class="font-extrabold text-lg mt-1">Kapan</h4>
+                                <p class="text-xs text-amber-900">Menanyakan waktu kejadian</p>
+                            </div>
+                            <div class="bg-green-400 text-white p-4 rounded-xl text-center shadow-lg border-2 border-green-600 transition-all transform hover:scale-105 cursor-pointer" onclick="revealInfo('info-siapa')">
+                                <span class="text-2xl">🟢</span>
+                                <h4 class="font-extrabold text-lg mt-1">Siapa</h4>
+                                <p class="text-xs text-green-100">Menanyakan orang/pelaku</p>
+                            </div>
+                            <div class="bg-blue-400 text-white p-4 rounded-xl text-center shadow-lg border-2 border-blue-600 transition-all transform hover:scale-105 cursor-pointer" onclick="revealInfo('info-mengapa')">
+                                <span class="text-2xl">🔵</span>
+                                <h4 class="font-extrabold text-lg mt-1">Mengapa</h4>
+                                <p class="text-xs text-blue-100">Menanyakan alasan/sebab</p>
+                            </div>
+                            <div class="bg-purple-400 text-white p-4 rounded-xl text-center shadow-lg border-2 border-purple-600 transition-all transform hover:scale-105 cursor-pointer" onclick="revealInfo('info-bagaimana')">
+                                <span class="text-2xl">🟣</span>
+                                <h4 class="font-extrabold text-lg mt-1">Bagaimana</h4>
+                                <p class="text-xs text-purple-100">Menanyakan cara/keadaan</p>
+                            </div>
+                        </div>
+
+                        <!-- Card box dynamic feedback -->
+                        <div id="info-box-display" class="mt-6 p-4 bg-white border-2 border-pink-400 rounded-xl text-center font-bold text-pink-950 text-base shadow-inner">
+                            💡 Klik salah satu "Gerbong ADIKSIMBA" di atas untuk melihat rahasia kalimat tanyanya!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detail Materi 2: Ide Pokok vs Pendukung -->
+                <div id="materi-2" class="materi-panel space-y-6 hidden">
+                    <div class="bg-indigo-50 rounded-2xl p-6 border-2 border-indigo-300">
+                        <h3 class="text-2xl font-black text-indigo-950 flex items-center gap-2 mb-4">
+                            🌳 Pohon Ide Paragraf!
+                        </h3>
+                        <p class="text-indigo-900 font-semibold mb-6">
+                            Paragraf itu seperti pohon yang rimbun! Ada batang utama yang menyokong kehidupan pohon, dan banyak daun hijau sebagai hiasan pelengkap.
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                            <!-- Visual Graphic (SVG) of Idea Tree -->
+                            <div class="bg-white p-4 rounded-2xl border-2 border-indigo-200 shadow-md flex justify-center">
+                                <svg viewBox="0 0 200 200" class="w-full max-w-[280px]">
+                                    <!-- Leaves (Supporting Details) -->
+                                    <path d="M 100 30 C 50 30 40 70 80 80 C 40 90 60 130 100 120 C 140 130 160 90 120 80 C 160 70 150 30 100 30 Z" fill="#22c55e" stroke="#16a34a" stroke-width="4" />
+                                    <!-- Trunk (Main Idea) -->
+                                    <rect x="90" y="110" width="20" height="60" fill="#78350f" stroke="#451a03" stroke-width="4" />
+                                    <path d="M 80 110 L 100 130 L 120 110" fill="none" stroke="#451a03" stroke-width="4" />
+                                    <!-- Labels -->
+                                    <g transform="translate(10, 75)">
+                                        <rect x="0" y="0" width="65" height="24" rx="8" fill="#fef08a" stroke="#ca8a04" stroke-width="2" />
+                                        <text x="32" y="16" font-family="'Fredoka'" font-size="10" font-weight="bold" fill="#713f12" text-anchor="middle">Ide Pendukung</text>
+                                    </g>
+                                    <g transform="translate(125, 60)">
+                                        <rect x="0" y="0" width="65" height="24" rx="8" fill="#fef08a" stroke="#ca8a04" stroke-width="2" />
+                                        <text x="32" y="16" font-family="'Fredoka'" font-size="10" font-weight="bold" fill="#713f12" text-anchor="middle">Ide Pendukung</text>
+                                    </g>
+                                    <g transform="translate(45, 145)">
+                                        <rect x="0" y="0" width="110" height="24" rx="8" fill="#f87171" stroke="#dc2626" stroke-width="2" />
+                                        <text x="55" y="16" font-family="'Fredoka'" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">Batang: IDE POKOK</text>
+                                    </g>
+                                </svg>
+                            </div>
+
+                            <!-- Explanations list with click pop-up info -->
+                            <div class="space-y-4">
+                                <div class="bg-red-100 p-4 rounded-xl border-l-8 border-red-500">
+                                    <h4 class="font-extrabold text-red-950 text-lg">💡 Ide Pokok (Gagasan Utama)</h4>
+                                    <p class="text-xs md:text-sm text-red-900 mt-1">
+                                        Inti atau masalah utama yang dibahas di suatu paragraf. Jumlahnya hanya ada <strong>satu</strong> di setiap paragraf. Biasanya terletak di awal (Deduktif) atau di akhir (Induktif).
+                                    </p>
+                                </div>
+                                <div class="bg-yellow-100 p-4 rounded-xl border-l-8 border-yellow-500">
+                                    <h4 class="font-extrabold text-amber-950 text-lg">🍂 Ide Pendukung (Gagasan Penjelas)</h4>
+                                    <p class="text-xs md:text-sm text-amber-900 mt-1">
+                                        Kalimat-kalimat yang menjelaskan, merinci, memberi contoh, atau membuktikan ide pokok agar paragraf lebih jelas dan meyakinkan pembaca.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detail Materi 3: Menyusun Ringkasan Simakan -->
+                <div id="materi-3" class="materi-panel space-y-6 hidden">
+                    <div class="bg-teal-50 rounded-2xl p-6 border-2 border-teal-300">
+                        <h3 class="text-2xl font-black text-teal-950 flex items-center gap-2 mb-4">
+                            🔊 Menyusun Ringkasan Berdasarkan Penjelasan yang Didengar!
+                        </h3>
+                        <p class="text-teal-900 font-semibold mb-4">
+                            Saat gurumu menjelaskan pelajaran secara lisan, bagaimana cara meringkasnya dengan baik agar nilai kita 100? Ikuti langkah **3 M** berikut!
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-orange-100 border-2 border-orange-400 p-4 rounded-xl text-center">
+                                <div class="text-4xl mb-2">👂</div>
+                                <h4 class="font-black text-orange-950 text-lg">1. MENYIMAK</h4>
+                                <p class="text-xs text-orange-900 font-medium mt-1">Dengarkan penjelasan lisan dari guru atau audio dengan konsentrasi penuh dan teliti.</p>
+                            </div>
+                            <div class="bg-pink-100 border-2 border-pink-400 p-4 rounded-xl text-center">
+                                <div class="text-4xl mb-2">✍️</div>
+                                <h4 class="font-black text-pink-950 text-lg">2. MENCATAT</h4>
+                                <p class="text-xs text-pink-900 font-medium mt-1">Catat hal-hal penting yang mencakup ide pokok dan kata kunci pembicaraan.</p>
+                            </div>
+                            <div class="bg-emerald-100 border-2 border-emerald-400 p-4 rounded-xl text-center">
+                                <div class="text-4xl mb-2">✏️</div>
+                                <h4 class="font-black text-emerald-950 text-lg">3. MENYUSUN</h4>
+                                <p class="text-xs text-emerald-900 font-medium mt-1">Tuliskan kembali menjadi kalimat yang singkat, padat, jelas menggunakan bahasamu sendiri.</p>
+                            </div>
+                        </div>
+
+                        <!-- Mini Demo Audio Generator -->
+                        <div class="bg-white p-4 rounded-xl border-2 border-teal-200 mt-4 text-center">
+                            <p class="text-teal-950 font-bold mb-3">🔊 Coba Dengarkan Teks Contoh Ini:</p>
+                            <div class="bg-teal-50 p-3 rounded-lg text-sm text-teal-900 italic max-w-xl mx-auto mb-4 border border-teal-200" id="speech-demo-text">
+                                "Sarang burung walet terbuat dari air liur burung itu sendiri. Sarang ini berharga sangat mahal karena memiliki banyak manfaat bagi kesehatan manusia, seperti meningkatkan kekebalan tubuh."
+                            </div>
+                            <button onclick="speakDemoText()" class="px-5 py-2 bg-teal-500 hover:bg-teal-600 text-white font-black rounded-xl border-b-4 border-teal-700 transition-all transform hover:-translate-y-0.5 active:translate-y-1 inline-flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                                Putar Suara Guru
+                            </button>
+                            <div class="mt-4 p-3 bg-yellow-50 rounded-lg text-xs text-amber-900 max-w-md mx-auto font-semibold border border-yellow-200">
+                                💡 <strong>Hasil Ringkasan Terbaik:</strong> Sarang burung walet berharga mahal karena terbuat dari liurnya dan bermanfaat untuk kesehatan tubuh.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- TAB 3: MESIN LANGKAH DETEKTIF -->
+        <section id="tab-langkah" class="tab-content hidden space-y-8 animate-fade-in">
+            <div class="text-center space-y-2">
+                <h2 class="text-3xl md:text-4xl font-black text-indigo-950">⚙️ Mesin Langkah Penemu Pemahaman</h2>
+                <p class="text-indigo-800 font-bold max-w-xl mx-auto">Mari kita praktik langsung menganalisis teks dengan menekan setiap tombol langkah di bawah ini!</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl border-4 border-indigo-400 shadow-xl max-w-4xl mx-auto space-y-6">
+                <!-- Paragraf Simulasi -->
+                <div class="bg-indigo-50 p-5 rounded-2xl border-2 border-indigo-200 shadow-inner relative">
+                    <span class="absolute -top-3 left-4 bg-indigo-500 text-white text-xs px-3 py-1 rounded-full font-bold">📋 Bacaan Detektif</span>
+                    <p class="text-base md:text-lg leading-relaxed text-indigo-950 font-medium" id="step-paragraf">
+                        <span id="p-kal1" class="transition-all duration-300">Hutan bakau memiliki peran yang sangat penting dalam menjaga keseimbangan alam pesisir pantai.</span>
+                        <span id="p-kal2" class="transition-all duration-300">Akar-akar pohon bakau yang kokoh mampu menahan empasan ombak besar sehingga dapat mencegah abrasi atau pengikisan pantai oleh air laut.</span>
+                        <span id="p-kal3" class="transition-all duration-300">Selain itu, wilayah rindang ini juga menjadi rumah yang nyaman bagi berbagai jenis kepiting, ikan, serta burung bangau untuk tinggal.</span>
+                    </p>
+                </div>
+
+                <!-- Langkah Controls -->
+                <div class="flex flex-col md:flex-row justify-between gap-4 border-t-2 border-indigo-100 pt-6">
+                    <!-- Steps navigation -->
+                    <div class="flex flex-wrap gap-2 md:w-2/3">
+                        <button onclick="runStep(1)" id="btn-step-1" class="step-btn px-4 py-2 rounded-xl bg-pink-500 text-white font-extrabold border-b-4 border-pink-700">Langkah 1: Baca Paragraf</button>
+                        <button onclick="runStep(2)" id="btn-step-2" class="step-btn px-4 py-2 rounded-xl bg-gray-200 text-gray-700 font-extrabold border-b-4 border-gray-400">Langkah 2: Cari Ide Pokok</button>
+                        <button onclick="runStep(3)" id="btn-step-3" class="step-btn px-4 py-2 rounded-xl bg-gray-200 text-gray-700 font-extrabold border-b-4 border-gray-400">Langkah 3: Cari Ide Pendukung</button>
+                        <button onclick="runStep(4)" id="btn-step-4" class="step-btn px-4 py-2 rounded-xl bg-gray-200 text-gray-700 font-extrabold border-b-4 border-gray-400">Langkah 4: Tulis Ringkasan</button>
+                    </div>
+                    <!-- Restart button -->
+                    <button onclick="resetSteps()" class="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-extrabold border-b-4 border-amber-600 self-center">🔄 Reset Mesin</button>
+                </div>
+
+                <!-- Explanation Box based on Step -->
+                <div id="step-explanation" class="p-5 rounded-2xl bg-yellow-100 border-2 border-amber-400 font-bold text-amber-950 text-sm md:text-base shadow-inner">
+                    👉 <strong>Mulai Petualangan:</strong> Klik tombol <strong>"Langkah 1"</strong> untuk memulai membedah teks dengan teliti!
+                </div>
+            </div>
+        </section>
+
+
+        <!-- TAB 4: KUIS DETEKTIF BAHASA (20 SOAL) -->
+        <section id="tab-game" class="tab-content hidden space-y-6 animate-fade-in">
+            <!-- Screen 1: Start Screen -->
+            <div id="quiz-start-screen" class="max-w-xl mx-auto bg-white p-8 rounded-3xl border-4 border-emerald-400 shadow-2xl text-center space-y-6">
+                <div class="text-6xl float-animation">🕵️‍♀️🏆</div>
+                <h2 class="text-3xl md:text-4xl font-black text-emerald-950">Misi Kuis Detektif Bahasa</h2>
+                <p class="text-emerald-900 font-bold leading-relaxed text-sm md:text-base">
+                    Apakah kamu siap membuktikan kemampuanmu dalam menganalisis informasi, ide pokok, dan merangkum bacaan? Ada <strong>20 Soal Tantangan</strong> menunggumu!
+                </p>
+
+                <div class="bg-emerald-50 p-4 rounded-xl text-left border border-emerald-200 space-y-2 text-xs md:text-sm text-emerald-900 font-semibold">
+                    <p>✨ Jawab 20 soal pilihan ganda.</p>
+                    <p>🔊 Beberapa soal bertipe "Menyimak" -- tekan tombol suara untuk mendengarkan teksnya secara langsung!</p>
+                    <p>⭐ Dapatkan skor terbaik untuk memperoleh Lencana Kelulusan Detektif Emas!</p>
+                </div>
+
+                <button onclick="startQuiz()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-white font-black text-xl rounded-2xl border-b-4 border-emerald-700 transition-all transform hover:-translate-y-1 active:translate-y-0 active:border-b-0">
+                    Mulai Misi Kuis! 🎮🚀
+                </button>
+            </div>
+
+            <!-- Screen 2: Game Play -->
+            <div id="quiz-play-screen" class="hidden max-w-3xl mx-auto bg-white p-4 md:p-6 rounded-3xl border-4 border-emerald-400 shadow-2xl space-y-6">
+                <!-- Info bar -->
+                <div class="flex justify-between items-center bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-xs md:text-sm font-bold text-emerald-950">
+                    <div>Soal Ke: <span id="current-q-num" class="text-emerald-600 text-lg font-black">1</span> / 20</div>
+                    <div class="flex items-center gap-1">⭐ Skor: <span id="current-score" class="text-amber-600 text-lg font-black">0</span></div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden border border-gray-300">
+                    <div id="quiz-progress" class="bg-emerald-500 h-full transition-all duration-300" style="width: 5%"></div>
+                </div>
+
+                <!-- Question Container -->
+                <div class="space-y-4">
+                    <!-- Audio-specific player (rendered if listening question) -->
+                    <div id="quiz-audio-section" class="hidden bg-yellow-50 p-4 rounded-xl border border-yellow-300 text-center space-y-2">
+                        <span class="bg-yellow-400 text-amber-950 text-xs px-3 py-1 rounded-full font-bold">🔊 SOAL MENYIMAK (DENGARKAN)</span>
+                        <p class="text-sm font-semibold text-amber-900">Tekan tombol di bawah untuk mendengarkan penjelasan lisan dari sistem sebelum menjawab!</p>
+                        <button onclick="speakQuizText()" class="px-5 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-xl border-b-4 border-yellow-700 transition-all transform active:translate-y-0.5 inline-flex items-center gap-2 text-sm">
+                            🔊 Dengarkan Penjelasan Guru
+                        </button>
+                        <!-- Text fallback toggle for accessibility -->
+                        <div class="mt-2">
+                            <button onclick="toggleTranscript()" class="text-xs text-amber-700 underline font-semibold">Tampilkan Teks Bacaan (Jika suara tidak terdengar)</button>
+                            <div id="transcript-box" class="hidden mt-2 p-3 bg-white border border-yellow-200 rounded text-xs text-amber-800 italic"></div>
+                        </div>
+                    </div>
+
+                    <!-- Question Text -->
+                    <h3 id="question-text" class="text-lg md:text-xl font-black text-emerald-950 leading-relaxed">
+                        Loading soal...
+                    </h3>
+
+                    <!-- Mini Reading Box (if present in the question) -->
+                    <div id="reading-box" class="hidden bg-gray-50 p-4 rounded-xl border border-gray-200 text-sm md:text-base italic text-gray-800 font-medium leading-relaxed"></div>
+                </div>
+
+                <!-- Options Grid -->
+                <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                    <!-- Option buttons dynamically generated -->
+                </div>
+
+                <!-- Footer Action Buttons / Navigation -->
+                <div class="flex justify-end pt-4 border-t border-emerald-100">
+                    <button id="next-q-btn" onclick="nextQuestion()" class="hidden px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-black rounded-xl border-b-4 border-emerald-700 transition-all transform hover:-translate-y-0.5 active:translate-y-1">
+                        Soal Berikutnya ➡️
+                    </button>
+                </div>
+            </div>
+
+            <!-- Screen 3: Result Screen -->
+            <div id="quiz-result-screen" class="hidden max-w-xl mx-auto bg-white p-8 rounded-3xl border-4 border-indigo-400 shadow-2xl text-center space-y-6">
+                <div class="text-6xl float-animation" id="result-emoji">🎉🏆</div>
+                <h2 class="text-3xl md:text-4xl font-black text-indigo-950">Misi Selesai!</h2>
+                
+                <p class="text-lg font-bold text-gray-700">
+                    Hebat sekali! Kamu berhasil menyelesaikan semua tantangan Detektif Bahasa.
+                </p>
+
+                <!-- Score Dashboard -->
+                <div class="bg-indigo-50 border-2 border-indigo-200 p-6 rounded-2xl max-w-sm mx-auto space-y-2">
+                    <div class="text-sm font-extrabold text-indigo-900 uppercase tracking-widest">Skor Akhir Kamu</div>
+                    <div class="text-5xl font-black text-indigo-600" id="final-score">100</div>
+                    <div class="text-xs font-semibold text-indigo-800" id="correct-wrong-summary">Jawaban Benar: 20/20</div>
+                </div>
+
+                <!-- Certificate of Completion -->
+                <div class="p-6 border-4 border-dashed border-yellow-400 rounded-2xl bg-amber-50 text-left space-y-4 shadow-md relative">
+                    <div class="absolute top-2 right-2 text-3xl">⭐</div>
+                    <h4 class="text-center font-black text-amber-950 text-xl tracking-wider">LENCANA DETEKTIF EMAS</h4>
+                    <p class="text-center text-xs text-amber-800 font-bold uppercase tracking-widest">Diberikan Kepada:</p>
+                    <div class="text-center text-2xl font-black text-indigo-600 underline" id="cert-student-name">Detektif Cilik Hebat</div>
+                    <p class="text-center text-xs text-amber-900 font-semibold leading-relaxed">
+                        Telah menguasai kompetensi Menganalisis Informasi (ADIKSIMBA), Menemukan Ide Pokok/Pendukung, dan Menyusun Ringkasan dengan Sempurna!
+                    </p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button onclick="restartQuiz()" class="flex-1 py-3.5 bg-indigo-500 hover:bg-indigo-400 text-white font-black rounded-2xl border-b-4 border-indigo-700 transition-all transform active:translate-y-0.5">
+                        🔄 Main Lagi
+                    </button>
+                    <button onclick="switchTab('home')" class="flex-1 py-3.5 bg-amber-400 hover:bg-amber-300 text-amber-950 font-black rounded-2xl border-b-4 border-amber-600 transition-all transform active:translate-y-0.5">
+                        🏠 Kembali ke Home
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-indigo-950 border-t-4 border-indigo-700 py-6 px-4 text-center text-indigo-200 mt-12 text-sm font-semibold">
+        <div class="max-w-7xl mx-auto space-y-2">
+            <p>🌟 "Membaca adalah jendela dunia, menyimak adalah kuncinya." 🌟</p>
+            <p class="text-xs text-indigo-400">&copy; 2026 Aplikasi Detektif Bahasa Indonesia - Dibangun khusus untuk Pembelajaran Kelas 5 SD</p>
+        </div>
+    </footer>
+
+    <!-- JS Logic Core -->
+    <script>
+        // Tab switching logic
+        function switchTab(tabName) {
+            playClickSound();
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+
+            // Reset navigation states
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.add('opacity-80');
+            });
+            const activeBtn = document.getElementById(`btn-${tabName}`);
+            if (activeBtn) activeBtn.classList.remove('opacity-80');
+        }
+
+        // Tab 2: Materi Info reveal
+        function revealInfo(type) {
+            playClickSound();
+            const box = document.getElementById('info-box-display');
+            let text = "";
+            switch (type) {
+                case 'info-apa':
+                    text = "🔴 Gerbong [Apa]: Digunakan untuk menyelidiki kejadian, benda, atau tema dari sebuah teks. Contoh: 'Apa tanaman yang mencegah pengikisan pantai?' (Jawab: Bakau)";
+                    break;
+                case 'info-dimana':
+                    text = "🟠 Gerbong [Di mana]: Digunakan untuk menyelidiki tempat kejadian perkara atau lokasi dalam teks. Contoh: 'Di mana tanaman bakau hidup?' (Jawab: Pesisir pantai)";
+                    break;
+                case 'info-kapan':
+                    text = "🟡 Gerbong [Kapan]: Digunakan untuk menyelidiki waktu terjadinya suatu hal dalam bacaan. Contoh: 'Kapan kita harus menyiram tanaman bakau?' (Jawab: Setiap sore)";
+                    break;
+                case 'info-siapa':
+                    text = "🟢 Gerbong [Siapa]: Digunakan untuk menyelidiki orang, pelaku, tokoh, atau hewan yang diceritakan. Contoh: 'Siapa yang menanam hutan bakau?' (Jawab: Para relawan lingkungan)";
+                    break;
+                case 'info-mengapa':
+                    text = "🔵 Gerbong [Mengapa]: Digunakan untuk menyelidiki alasan, latar belakang, atau penyebab suatu peristiwa terjadi. Contoh: 'Mengapa hutan bakau sangat penting?' (Jawab: Karena akarnya mencegah abrasi)";
+                    break;
+                case 'info-bagaimana':
+                    text = "🟣 Gerbong [Bagaimana]: Digunakan untuk menyelidiki cara kerja, proses, atau urutan kejadian dari teks. Contoh: 'Bagaimana akar bakau mencegah ombak?' (Jawab: Akar yang kokoh memecah empasan air laut)";
+                    break;
+            }
+            box.innerText = text;
+        }
+
+        function showMateriDetail(panelId) {
+            playClickSound();
+            document.querySelectorAll('.materi-panel').forEach(panel => panel.classList.add('hidden'));
+            document.getElementById(panelId).classList.remove('hidden');
+
+            // Set button styles
+            document.querySelectorAll('.materi-tab-btn').forEach(btn => {
+                btn.className = "materi-tab-btn px-5 py-3 rounded-2xl bg-gray-200 text-gray-700 font-extrabold border-b-4 border-gray-400 transition-all";
+            });
+            
+            let activeBtnId = "";
+            if (panelId === 'materi-1') activeBtnId = 'btn-m1';
+            if (panelId === 'materi-2') activeBtnId = 'btn-m2';
+            if (panelId === 'materi-3') activeBtnId = 'btn-m3';
+            
+            document.getElementById(activeBtnId).className = `materi-tab-btn px-5 py-3 rounded-2xl text-white font-extrabold transition-all border-b-4 ` + 
+                (panelId === 'materi-1' ? 'bg-pink-500 border-pink-700' : (panelId === 'materi-2' ? 'bg-indigo-500 border-indigo-700' : 'bg-teal-500 border-teal-700'));
+        }
+
+        // Web Speech synthesis for read-aloud features
+        function speakDemoText() {
+            const text = document.getElementById('speech-demo-text').innerText;
+            speakNow(text);
+        }
+
+        function speakNow(text) {
+            if ('speechSynthesis' in window) {
+                // Cancel ongoing speeches
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'id-ID'; // Indonesian voice localization
+                utterance.rate = 0.95; // Slightly slower for kids to absorb
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Browser kamu tidak mendukung fitur suara pembaca otomatis. Silakan baca manual teksnya ya!");
+            }
+        }
+
+        // TAB 3: MESIN LANGKAH DETEKTIF
+        function runStep(stepNum) {
+            playClickSound();
+            // Reset all highlights
+            const k1 = document.getElementById('p-kal1');
+            const k2 = document.getElementById('p-kal2');
+            const k3 = document.getElementById('p-kal3');
+            
+            k1.className = "transition-all duration-300";
+            k2.className = "transition-all duration-300";
+            k3.className = "transition-all duration-300";
+
+            // Update step buttons classes
+            document.querySelectorAll('.step-btn').forEach(btn => {
+                btn.className = "step-btn px-4 py-2 rounded-xl bg-gray-200 text-gray-700 font-extrabold border-b-4 border-gray-400";
+            });
+            document.getElementById(`btn-step-${stepNum}`).className = "step-btn px-4 py-2 rounded-xl bg-indigo-500 text-white font-extrabold border-b-4 border-indigo-700";
+
+            const exp = document.getElementById('step-explanation');
+
+            switch (stepNum) {
+                case 1:
+                    exp.innerHTML = "📖 <strong>Langkah 1: Membaca Paragraf</strong><br>Bacalah seluruh paragraf dari awal sampai akhir untuk menangkap inti pembicaraan secara menyeluruh.";
+                    break;
+                case 2:
+                    k1.className = "bg-red-200 text-red-950 font-bold px-1 rounded transition-all duration-300";
+                    exp.innerHTML = "🌳 <strong>Langkah 2: Menemukan Ide Pokok (Batang Utama)</strong><br>Lihat kalimat pertama yang disorot merah! Ini membahas peran penting hutan bakau bagi keseimbangan pantai. Ini adalah <span class='text-red-700'>IDE POKOK</span> paragraf.";
+                    break;
+                case 3:
+                    k2.className = "bg-blue-100 text-blue-950 font-bold px-1 rounded transition-all duration-300";
+                    k3.className = "bg-blue-100 text-blue-950 font-bold px-1 rounded transition-all duration-300";
+                    exp.innerHTML = "🍂 <strong>Langkah 3: Menemukan Ide Pendukung (Daun Rimbun)</strong><br>Kalimat ke-2 dan ke-3 disorot biru karena menjelaskan detail pencegahan abrasi pantai dan keanekaragaman rumah hewan pesisir. Ini adalah <span class='text-blue-700'>IDE PENDUKUNG</span>.";
+                    break;
+                case 4:
+                    k1.className = "bg-emerald-100 text-emerald-950 font-bold px-1 rounded transition-all duration-300";
+                    k2.className = "bg-emerald-100 text-emerald-950 font-bold px-1 rounded transition-all duration-300";
+                    k3.className = "bg-emerald-100 text-emerald-950 font-bold px-1 rounded transition-all duration-300";
+                    exp.innerHTML = "✏️ <strong>Langkah 4: Merangkum Hasil Saringan</strong><br>Gabungkan ide pokok dan ide pendukung penting ke dalam kalimat pendek. <br><div class='mt-2 p-2 bg-emerald-50 border border-emerald-300 rounded text-emerald-900 font-bold'>Ringkasan: Hutan bakau sangat penting menjaga keseimbangan pantai karena mencegah abrasi dan menjadi tempat hidup hewan laut.</div>";
+                    break;
+            }
+        }
+
+        function resetSteps() {
+            playClickSound();
+            const k1 = document.getElementById('p-kal1');
+            const k2 = document.getElementById('p-kal2');
+            const k3 = document.getElementById('p-kal3');
+            k1.className = "transition-all duration-300";
+            k2.className = "transition-all duration-300";
+            k3.className = "transition-all duration-300";
+
+            document.querySelectorAll('.step-btn').forEach(btn => {
+                btn.className = "step-btn px-4 py-2 rounded-xl bg-gray-200 text-gray-700 font-extrabold border-b-4 border-gray-400";
+            });
+            document.getElementById('btn-step-1').className = "step-btn px-4 py-2 rounded-xl bg-pink-500 text-white font-extrabold border-b-4 border-pink-700";
+            document.getElementById('step-explanation').innerHTML = "👉 <strong>Mulai Petualangan:</strong> Klik tombol <strong>\"Langkah 1\"</strong> untuk memulai membedah teks dengan teliti!";
+        }
+
+
+        // TAB 4: KUIS DETEKTIF BAHASA (20 SOAL) DATA & LOGIC
+        const quizData = [
+            {
+                id: 1,
+                question: "Kita ingin mencari informasi mengenai tempat terjadinya suatu peristiwa dalam teks. Kata tanya ADIKSIMBA yang paling tepat kita gunakan adalah...",
+                options: ["Apa", "Di mana", "Siapa", "Mengapa"],
+                correct: 1,
+                reading: ""
+            },
+            {
+                id: 2,
+                question: "Bacalah paragraf berikut. Apakah ide pokok utama dari cerita pendek di bawah ini?",
+                options: [
+                    "Kucing merupakan hewan peliharaan yang bersih.",
+                    "Setiap hari kucing menjilati bulunya untuk membersihkan diri.",
+                    "Kucing memiliki lidah kasar untuk menyisir bulu.",
+                    "Cara sehat kucing mandi secara mandiri."
+                ],
+                correct: 0,
+                reading: "Kucing merupakan hewan peliharaan yang sangat bersih. Setiap hari, kucing merawat diri dengan menjilati bulu-bulunya secara teratur. Air liurnya bertindak sebagai pembersih alami, didukung oleh struktur lidahnya yang kasar seperti sisir untuk merontokkan kotoran."
+            },
+            {
+                id: 3,
+                question: "Kalimat yang berfungsi menjelaskan atau memperinci gagasan utama dalam sebuah paragraf disebut sebagai...",
+                options: ["Kalimat Utama", "Ide Pokok", "Ide Pendukung", "Kesimpulan Utama"],
+                correct: 2,
+                reading: ""
+            },
+            {
+                id: 4,
+                question: "🔊 SOAL MENYIMAK: Dengarkan penjelasan audio, lalu jawab pertanyaan berikut! Informasi penting apa yang kamu peroleh dari penjelasan lisan tersebut?",
+                options: [
+                    "Burung beo bisa bernyanyi seperti penyanyi profesional.",
+                    "Burung beo pandai menirukan suara karena struktur syrinx khusus.",
+                    "Makanan burung beo adalah biji matahari agar bisa bicara.",
+                    "Cara melatih beo agar jinak di dalam sangkar besi."
+                ],
+                correct: 1,
+                reading: "Burung beo dikenal cerdas karena kemampuannya meniru suara manusia. Hal ini dikarenakan struktur organ suaranya yang bernama syrinx, dibantu oleh gerakan lidah yang sangat fleksibel saat mengolah udara."
+            },
+            {
+                id: 5,
+                question: "Sebelum mulai merangkum penjelasan lisan yang dibacakan oleh guru di kelas, langkah pertama yang paling penting harus kita lakukan adalah...",
+                options: [
+                    "Menutup telinga agar tidak terganggu suara lain.",
+                    "Menyimak dan mendengarkan penjelasan lisan dengan penuh konsentrasi.",
+                    "Menulis seluruh kalimat yang diucapkan tanpa terkecuali.",
+                    "Mencari jawaban di buku paket secara acak."
+                ],
+                correct: 1,
+                reading: ""
+            },
+            {
+                id: 6,
+                question: "Paragraf yang memiliki ide pokok atau kalimat utama terletak di awal paragraf dinamakan paragraf...",
+                options: ["Induktif", "Deduktif", "Campuran", "Persuasif"],
+                correct: 1,
+                reading: ""
+            },
+            {
+                id: 7,
+                question: "Bacalah teks berikut. Apa ide pokok yang dibahas pada teks di bawah?",
+                options: [
+                    "Pemberian pupuk kompos secara teratur.",
+                    "Bunga mawar tumbuh subur di pot gantung.",
+                    "Cara merawat bunga mawar agar tumbuh subur dan berbunga indah.",
+                    "Bunga mawar harus disiram setiap hari dengan air hangat."
+                ],
+                correct: 2,
+                reading: "Merawat bunga mawar di pot memerlukan beberapa trik khusus agar tumbuh subur. Tanaman ini harus disiram secara teratur sebanyak dua kali sehari. Selain itu, pemberian pupuk kompos setiap bulan membantu mawar tumbuh rimbun dan memunculkan kelopak bunga yang indah cerah."
+            },
+            {
+                id: 8,
+                question: "Kata tanya dalam sistem ADIKSIMBA yang digunakan untuk menanyakan alasan atau penyebab terjadinya peristiwa adalah...",
+                options: ["Kapan", "Mengapa", "Bagaimana", "Siapa"],
+                correct: 1,
+                reading: ""
+            },
+            {
+                id: 9,
+                question: "Ringkasan yang baik harus ditulis secara...",
+                options: [
+                    "Lebih panjang dan lebar dari teks aslinya.",
+                    "Singkat, padat, jelas, dan tetap sesuai dengan isi asli teks.",
+                    "Menyisipkan banyak opini baru dari pendapat pribadi kita.",
+                    "Menggunakan bahasa asing yang sulit dipahami orang lain."
+                ],
+                correct: 1,
+                reading: ""
+            },
+            {
+                id: 10,
+                question: "🔊 SOAL MENYIMAK: Dengarkan penjelasan tentang daur hidup kupu-kupu berikut! Apa urutan pertama dari siklus hidup kupu-kupu yang kamu dengar?",
+                options: ["Ulat kecil yang merusak tanaman", "Kompong bergelantungan di dahan", "Kupu-kupu dewasa yang terbang indah", "Telur yang menempel di daun"],
+                correct: 3,
+                reading: "Metamorfosis kupu-kupu dimulai dari telur yang diletakkan induknya di atas daun pohon. Setelah beberapa hari, telur menetas menjadi ulat, lalu berubah menjadi kepompong, hingga akhirnya keluar menjadi kupu-kupu cantik."
+            },
+            {
+                id: 11,
+                question: "Ide pokok suatu paragraf biasanya hanya berjumlah...",
+                options: ["Satu", "Dua", "Tiga", "Sesuai jumlah kalimat"],
+                correct: 0,
+                reading: ""
+            },
+            {
+                id: 12,
+                question: "Dari paragraf tentang 'kucing peliharaan' di soal nomor 2, manakah kalimat di bawah ini yang merupakan ide pendukung?",
+                options: [
+                    "Kucing adalah jenis burung langka.",
+                    "Kucing menjilati bulunya untuk membersihkan kotoran.",
+                    "Kucing suka berenang di sungai deras.",
+                    "Kucing tidak pernah membersihkan diri mereka."
+                ],
+                correct: 1,
+                reading: "Kucing merupakan hewan peliharaan yang sangat bersih. Setiap hari, kucing merawat diri dengan menjilati bulu-bulunya secara teratur. Air liurnya bertindak sebagai pembersih alami."
+            },
+            {
+                id: 13,
+                question: "Manakah singkatan yang tepat dari ADIKSIMBA?",
+                options: [
+                    "Apa, Di mana, Kapan, Siapa, Mengapa, Bagaimana",
+                    "Ada, Di sana, Kiri, Samping, Muka, Belakang",
+                    "Aku, Dia, Kita, Saya, Mereka, Bersama",
+                    "Awal, Dinding, Kita, Selalu, Membaca, Bahasa"
+                ],
+                correct: 0,
+                reading: ""
+            },
+            {
+                id: 14,
+                question: "Bolehkah kita memasukkan fakta baru yang tidak tertulis atau tidak terdengar dari penjelasan asli saat menyusun sebuah ringkasan teks?",
+                options: [
+                    "Boleh, supaya ringkasannya makin keren dan panjang.",
+                    "Boleh, asal mendapatkan izin langsung dari teman sebangku.",
+                    "Tidak boleh, ringkasan harus murni menyarikan informasi asli.",
+                    "Sangat dianjurkan agar tulisan terlihat pintar."
+                ],
+                correct: 2,
+                reading: ""
+            },
+            {
+                id: 15,
+                question: "Paragraf yang kalimat utamanya atau ide pokoknya berada di bagian akhir paragraf dinamakan paragraf...",
+                options: ["Induktif", "Deduktif", "Narasi", "Deskripsi"],
+                correct: 0,
+                reading: ""
+            },
+            {
+                id: 16,
+                question: "🔊 SOAL MENYIMAK: Dengarkan pesan singkat gurumu tentang kesehatan berikut ini! Apa manfaat dari meminum air putih bagi tubuh kita sesuai penjelasan tadi?",
+                options: [
+                    "Membuat kita kenyang tanpa perlu makan nasi.",
+                    "Menjaga konsentrasi belajar serta melancarkan metabolisme tubuh.",
+                    "Menyembuhkan patah tulang kaki secara instan.",
+                    "Mengurangi daya ingat otak kita saat ujian."
+                ],
+                correct: 1,
+                reading: "Tubuh kita membutuhkan minimal delapan gelas air putih sehari. Minum air cukup sangat penting untuk menjaga konsentrasi belajar kita di sekolah serta melancarkan proses metabolisme tubuh agar kita tidak mudah lelah."
+            },
+            {
+                id: 17,
+                question: "Saat mendengarkan penjelasan lisan, kita mencatat beberapa kata kunci penting. Apa gunanya mencatat kata kunci tersebut?",
+                options: [
+                    "Untuk mencoret-coret kertas agar tidak bosan.",
+                    "Sebagai bahan contekan saat ulangan esai.",
+                    "Memudahkan ingatan kita dalam menyusun ringkasan berita.",
+                    "Agar pulpen kita cepat habis tintanya."
+                ],
+                correct: 2,
+                reading: ""
+            },
+            {
+                id: 18,
+                question: "Bacalah teks pendek di bawah ini! Informasi apa yang didapatkan dengan menggunakan pertanyaan tanya 'Mengapa' dari teks tersebut?",
+                options: [
+                    "Sebab sampah plastik merusak lingkungan karena sulit terurai.",
+                    "Kapan sampah plastik dibakar di tong sampah sekolah.",
+                    "Siapa pembuat plastik pertama di dunia internasional.",
+                    "Bentuk-bentuk sampah botol plastik bekas minuman soda."
+                ],
+                correct: 0,
+                reading: "Sampah plastik merupakan ancaman serius bagi kelestarian bumi kita. Bahan plastik sangat sulit terurai secara alami dan membutuhkan waktu ratusan tahun, sehingga menumpuk dan merusak kesuburan tanah."
+            },
+            {
+                id: 19,
+                question: "Bagaimanakah hubungan antara ide pokok dan ide pendukung di dalam suatu paragraf yang sehat?",
+                options: [
+                    "Keduanya saling memperebutkan posisi utama.",
+                    "Ide pendukung berfungsi menjelaskan dan memperkuat ide pokok agar paragraf utuh.",
+                    "Ide pokok selalu menolak penjelasan dari ide pendukung.",
+                    "Tidak ada hubungan sama sekali, mereka ditulis bebas."
+                ],
+                correct: 1,
+                reading: ""
+            },
+            {
+                id: 20,
+                question: "Setelah mendengarkan penjelasan lisan, mencatat kata kunci, dan menyusun draf ringkasan, langkah evaluasi akhir penyusunan ringkasan adalah...",
+                options: [
+                    "Membaca ulang untuk memastikan kalimatnya padat, padu, dan sesuai isi penjelasan asli.",
+                    "Langsung merobek kertas tugas dan dikumpulkan ke meja guru.",
+                    "Mengganti seluruh kosakata dengan bahasa daerah kita saja.",
+                    "Meminta teman lain menuliskan ulang seluruh ringkasan kita."
+                ],
+                correct: 0,
+                reading: ""
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let nameStudent = "Detektif Cilik Hebat";
+
+        function startQuiz() {
+            playClickSound();
+            
+            // Ask for student name for certificate with a prompt custom modal feel
+            const inputName = prompt("Masukkan namamu untuk sertifikat kelulusan kelak:", "Detektif Cilik Hebat");
+            if (inputName && inputName.trim() !== "") {
+                nameStudent = inputName.trim();
+            } else {
+                nameStudent = "Detektif Cilik Hebat";
+            }
+
+            document.getElementById('quiz-start-screen').classList.add('hidden');
+            document.getElementById('quiz-play-screen').classList.remove('hidden');
+            document.getElementById('quiz-result-screen').classList.add('hidden');
+
+            currentQuestionIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            selectedOption = null;
+            document.getElementById('next-q-btn').classList.add('hidden');
+            
+            const q = quizData[currentQuestionIndex];
+            
+            // Update UI trackers
+            document.getElementById('current-q-num').innerText = currentQuestionIndex + 1;
+            document.getElementById('current-score').innerText = score;
+            
+            // Update Progress Bar
+            const percent = ((currentQuestionIndex + 1) / quizData.length) * 100;
+            document.getElementById('quiz-progress').style.width = `${percent}%`;
+
+            // Setup Question text
+            document.getElementById('question-text').innerText = q.question;
+
+            // Setup Reading Box
+            const readBox = document.getElementById('reading-box');
+            if (q.reading && !isListeningQuestion(q.id)) {
+                readBox.innerText = q.reading;
+                readBox.classList.remove('hidden');
+            } else {
+                readBox.classList.add('hidden');
+            }
+
+            // Setup Audio section if it's a listening question (IDs: 4, 10, 16)
+            const audioSec = document.getElementById('quiz-audio-section');
+            const transcriptBox = document.getElementById('transcript-box');
+            transcriptBox.classList.add('hidden');
+            
+            if (isListeningQuestion(q.id)) {
+                audioSec.classList.remove('hidden');
+                transcriptBox.innerText = q.reading;
+            } else {
+                audioSec.classList.add('hidden');
+            }
+
+            // Render options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 rounded-2xl bg-gray-100 hover:bg-emerald-50 border-2 border-gray-300 text-left font-bold text-gray-800 text-sm md:text-base transition-all transform hover:-translate-y-0.5 active:translate-y-0.5 flex gap-3 items-center";
+                btn.onclick = () => selectOption(idx, btn);
+                
+                // Add labels A, B, C, D
+                const labels = ["A", "B", "C", "D"];
+                btn.innerHTML = `<span class="bg-indigo-200 text-indigo-950 px-2.5 py-1 rounded-lg text-xs font-black border border-indigo-300">${labels[idx]}</span> <span class="flex-1">${opt}</span>`;
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function isListeningQuestion(id) {
+            return id === 4 || id === 10 || id === 16;
+        }
+
+        function speakQuizText() {
+            const q = quizData[currentQuestionIndex];
+            speakNow(q.reading);
+        }
+
+        function toggleTranscript() {
+            playClickSound();
+            const box = document.getElementById('transcript-box');
+            if (box.classList.contains('hidden')) {
+                box.classList.remove('hidden');
+            } else {
+                box.classList.add('hidden');
+            }
+        }
+
+        function selectOption(idx, clickedBtn) {
+            if (selectedOption !== null) return; // Prevent double clicking answer
+            
+            selectedOption = idx;
+            const q = quizData[currentQuestionIndex];
+            const isCorrect = (idx === q.correct);
+
+            // Audio feedback
+            if (isCorrect) {
+                playCorrectSound();
+                score += 5; // Max 100 points (20 * 5)
+                document.getElementById('current-score').innerText = score;
+                clickedBtn.classList.remove('bg-gray-100', 'border-gray-300', 'hover:bg-emerald-50');
+                clickedBtn.classList.add('bg-emerald-400', 'text-white', 'border-emerald-600', 'btn-shadow-green');
+            } else {
+                playWrongSound();
+                clickedBtn.classList.remove('bg-gray-100', 'border-gray-300', 'hover:bg-emerald-50');
+                clickedBtn.classList.add('bg-rose-400', 'text-white', 'border-rose-600');
+                
+                // Highlight the correct answer
+                const optionsContainer = document.getElementById('options-container');
+                const correctBtn = optionsContainer.children[q.correct];
+                correctBtn.classList.remove('bg-gray-100', 'border-gray-300', 'hover:bg-emerald-50');
+                correctBtn.classList.add('bg-emerald-400', 'text-white', 'border-emerald-600');
+            }
+
+            // Show next button
+            document.getElementById('next-q-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            playClickSound();
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            playVictorySound();
+            document.getElementById('quiz-play-screen').classList.add('hidden');
+            document.getElementById('quiz-result-screen').classList.remove('hidden');
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('correct-wrong-summary').innerText = `Jawaban Benar: ${score / 5} / 20 Soal`;
+            document.getElementById('cert-student-name').innerText = nameStudent;
+
+            const emojiEl = document.getElementById('result-emoji');
+            if (score >= 80) {
+                emojiEl.innerText = "👑🏆✨";
+            } else if (score >= 60) {
+                emojiEl.innerText = "⭐🧗‍♂️👍";
+            } else {
+                emojiEl.innerText = "📚💪💡";
+            }
+        }
+
+        function restartQuiz() {
+            playClickSound();
+            startQuiz();
+        }
+
+        // Initialize App on Window load
+        window.onload = function() {
+            switchTab('home');
+            resetSteps();
+        };
+    </script>
+</body>
+</html>
